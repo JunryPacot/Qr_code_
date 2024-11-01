@@ -14,7 +14,6 @@
       min-height: 100vh;
       margin: 0;
       background-color: #f0f0f0;
-      overflow: hidden;
     }
 
     .credit {
@@ -117,17 +116,28 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       background-color: #fff;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
       animation: pulse 2s infinite ease-in-out;
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); }
-      50% { transform: scale(1.01); box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.01); }
     }
 
-    .fb-page {
-      width: 100%;
-      height: 100%;
+    .tap-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 5px;
+      font-size: 1.2em;
+      text-align: center;
+      z-index: 1000;
+      display: none;
     }
   </style>
 </head>
@@ -148,31 +158,31 @@
       <div id="qr-code"></div>
     </div>
 
-    <!-- Facebook Page Feed -->
     <div class="fb-container">
-      <div id="fb-root"></div>
-      <div class="fb-page" data-href="https://www.facebook.com/snditsolutions" data-tabs="timeline" data-width="300" data-height="300" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
-        <blockquote cite="https://www.facebook.com/snditsolutions" class="fb-xfbml-parse-ignore">
-          <a href="https://www.facebook.com/snditsolutions">SND I.T. Solutions - Computer Store</a>
-        </blockquote>
-      </div>
+      <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fsnditsolutions&tabs=timeline&width=400&height=300&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="400" height="300" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
     </div>
   </div>
 
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
+  <div class="tap-message" id="tap-message">Tap anywhere to play music</div>
 
   <script>
-    // Show alert and play music after user clicks "OK"
     window.onload = function() {
-      showAlertAndPlayMusic();
+      showAlertAndPromptForMusic();
     };
 
-    function showAlertAndPlayMusic() {
+    function showAlertAndPromptForMusic() {
       alert("Welcome to Junry's QR Code Generator");
-      const backgroundMusic = document.getElementById('background-music');
-      backgroundMusic.play().catch(error => {
-        console.error("Music playback failed: ", error);
-      });
+      const tapMessage = document.getElementById('tap-message');
+      tapMessage.style.display = 'block';
+
+      document.addEventListener('click', () => {
+        const backgroundMusic = document.getElementById('background-music');
+        backgroundMusic.play().then(() => {
+          tapMessage.style.display = 'none';
+        }).catch(error => {
+          console.warn("Music playback requires interaction. Tap to start the music.");
+        });
+      }, { once: true });
     }
 
     function generateQRCode() {
@@ -184,14 +194,12 @@
         return;
       }
 
-      // Display loading animation
       qrCodeContainer.innerHTML = `<div class="loader"></div>`;
 
-      // Set the QR code image source after a short delay
       setTimeout(() => {
         const qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(text)}&size=200x200`;
         qrCodeContainer.innerHTML = `<img src="${qrCodeURL}" alt="QR Code">`;
-      }, 1000); // Adjust delay as needed
+      }, 1000);
     }
   </script>
 </body>
