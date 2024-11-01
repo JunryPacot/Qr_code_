@@ -151,7 +151,6 @@
     <!-- Facebook Page Feed -->
     <div class="fb-container">
       <div id="fb-root"></div>
-      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
       <div class="fb-page" data-href="https://www.facebook.com/snditsolutions" data-tabs="timeline" data-width="300" data-height="300" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
         <blockquote cite="https://www.facebook.com/snditsolutions" class="fb-xfbml-parse-ignore">
           <a href="https://www.facebook.com/snditsolutions">SND I.T. Solutions - Computer Store</a>
@@ -160,6 +159,8 @@
     </div>
   </div>
 
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
+
   <script>
     // Show alert and play music after user clicks "OK"
     window.onload = function() {
@@ -167,11 +168,10 @@
     };
 
     function showAlertAndPlayMusic() {
-      new Promise((resolve) => {
-        alert("Welcome to Junry's QR Code Generator");
-        resolve();
-      }).then(() => {
-        document.getElementById('background-music').play();
+      alert("Welcome to Junry's QR Code Generator");
+      const backgroundMusic = document.getElementById('background-music');
+      backgroundMusic.play().catch(error => {
+        console.error("Music playback failed: ", error);
       });
     }
 
