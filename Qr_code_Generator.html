@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .credit {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.9em;
+      background-color: #e0e0e0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .credit a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .credit a:hover {
+      text-decoration: underline;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 768px) {
+      .main-content {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    .container {
+      text-align: center;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      flex: 1;
+    }
+
+    #text-input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      animation: inputGlow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes inputGlow {
+      from { box-shadow: 0 0 5px #ddd; }
+      to { box-shadow: 0 0 10px #007bff; }
+    }
+
+    button {
+      padding: 10px 20px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #qr-code img {
+      margin-top: 20px;
+      width: 200px;
+      height: 200px;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fb-container {
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      overflow-y: scroll;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); }
+      50% { transform: scale(1.01); box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); }
+    }
+
+    .fb-page {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <audio id="background-music" loop>
+    <source src="APT.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="credit">
+    Developed by <a href="https://www.facebook.com/profile.php?id=100075262125552" target="_blank">Junry Pacot</a>
+  </div>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>QR Code Generator</h1>
+      <input type="text" id="text-input" placeholder="Enter link or information">
+      <button onclick="generateQRCode()">Generate QR Code</button>
+      <div id="qr-code"></div>
+    </div>
+
+    <!-- Facebook Page Feed -->
+    <div class="fb-container">
+      <div id="fb-root"></div>
+      <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0"></script>
+      <div class="fb-page" data-href="https://www.facebook.com/snditsolutions" data-tabs="timeline" data-width="300" data-height="300" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+        <blockquote cite="https://www.facebook.com/snditsolutions" class="fb-xfbml-parse-ignore">
+          <a href="https://www.facebook.com/snditsolutions">SND I.T. Solutions - Computer Store</a>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show alert and play music after user clicks "OK"
+    window.onload = function() {
+      showAlertAndPlayMusic();
+    };
+
+    function showAlertAndPlayMusic() {
+      new Promise((resolve) => {
+        alert("Welcome to Junry's QR Code Generator");
+        resolve();
+      }).then(() => {
+        document.getElementById('background-music').play();
+      });
+    }
+
+    function generateQRCode() {
+      const text = document.getElementById("text-input").value;
+      const qrCodeContainer = document.getElementById("qr-code");
+
+      if (text.trim() === "") {
+        alert("Please enter some text or a link to generate the QR code.");
+        return;
+      }
+
+      // Display loading animation
+      qrCodeContainer.innerHTML = `<div class="loader"></div>`;
+
+      // Set the QR code image source after a short delay
+      setTimeout(() => {
+        const qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(text)}&size=200x200`;
+        qrCodeContainer.innerHTML = `<img src="${qrCodeURL}" alt="QR Code">`;
+      }, 1000); // Adjust delay as needed
+    }
+  </script>
+</body>
+</html>
